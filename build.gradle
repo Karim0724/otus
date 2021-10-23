@@ -20,13 +20,23 @@ allprojects {
     group "ru.sharipov"
 
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 
     apply plugin: "io.spring.dependency-management"
     dependencyManagement {
         dependencies {
+            imports {
+                mavenBom("org.springframework.boot:spring-boot-dependencies:${Versions.springBootDependencies}")
+            }
             dependency("com.google.guava:guava:${Versions.guava}")
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
         }
     }
 }
