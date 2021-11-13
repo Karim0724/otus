@@ -6,16 +6,12 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-dependencies {
-    implementation 'com.google.guava:guava'
-}
-
 shadowJar {
-    archiveBaseName.set('gradleHelloWorld')
+    archiveBaseName.set('reflectionsHomework')
     archiveVersion.set('0.1')
     archiveClassifier.set('')
     manifest {
-        attributes 'Main-Class': 'ru.sharipov.HelloOtus'
+        attributes 'Main-Class': 'ru.sharipov.Loader'
     }
 }
 

@@ -5,7 +5,6 @@
 *.ipr
 
 # Ignore Gradle project-specific cache directory
-.gradle
 /buildSrc/.gradle/
 
 # Compiled class file
