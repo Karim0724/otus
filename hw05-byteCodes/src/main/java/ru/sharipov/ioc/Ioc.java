@@ -1,7 +1,7 @@
 package ru.sharipov.ioc;
 
-import ru.sharipov.ITestLogging;
-import ru.sharipov.TestLogging;
+import ru.sharipov.service.TestLogging;
+import ru.sharipov.ioc.log.LogInvocationHandler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -11,9 +11,9 @@ public class Ioc {
 
     }
 
-    public static ITestLogging createTestLogging() {
-        InvocationHandler handler = new LogInvocationHandler(new TestLogging());
-        return (ITestLogging) Proxy.newProxyInstance(Ioc.class.getClassLoader(),
-                new Class<?>[]{ITestLogging.class}, handler);
+    public static TestLogging createTestLoggingProxy(TestLogging testLogging) {
+        InvocationHandler handler = new LogInvocationHandler(testLogging);
+        return (TestLogging) Proxy.newProxyInstance(Ioc.class.getClassLoader(),
+                new Class<?>[]{TestLogging.class}, handler);
     }
 }

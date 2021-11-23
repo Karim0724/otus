@@ -1,8 +1,8 @@
-package ru.sharipov;
+package ru.sharipov.service;
 
-import ru.sharipov.ioc.Log;
+import ru.sharipov.ioc.log.Log;
 
-public class TestLogging implements ITestLogging {
+public class TestLoggingImpl implements TestLogging {
     @Override
     public void calculation(int a) {
         System.out.println("int a");
@@ -34,6 +34,12 @@ public class TestLogging implements ITestLogging {
     @Log
     public void calculation(long a) {
         System.out.println("long a");
+    }
+
+    @Override
+    @Log
+    public void calculation() {
+        System.out.println("no params");
     }
 
     public void doSomething() {

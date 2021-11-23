@@ -1,4 +1,4 @@
-package ru.sharipov.ioc;
+package ru.sharipov.ioc.log;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
