@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+dependencies {
+    testImplementation ('org.junit.jupiter:junit-jupiter-api')
+    testImplementation ('org.junit.jupiter:junit-jupiter-engine')
+}
+
+shadowJar {
+    archiveBaseName.set('solid')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'ru.sharipov.Demo'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.build.dependsOn tasks.shadowJar
