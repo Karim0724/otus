@@ -1,6 +1,8 @@
-package ru.sharipov.domain;
+package ru.sharipov.domain.atm.impl;
 
+import ru.sharipov.domain.atm.MoneyProvider;
 import ru.sharipov.domain.banknote.Banknote;
+import ru.sharipov.domain.banknote.BanknoteStorage;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,23 +11,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Atm {
-    private List<Banknote> banknotes;
+public class MoneyProviderImpl implements MoneyProvider {
+    private final BanknoteStorage banknoteStorage;
 
-    public Atm(List<Banknote> banknotes) {
-        this.banknotes = banknotes;
+    public MoneyProviderImpl(BanknoteStorage banknoteStorage) {
+        this.banknoteStorage = banknoteStorage;
     }
 
-    public void acceptBanknote(Banknote banknote) {
-        banknotes.add(banknote);
-    }
-
+    @Override
     public List<Banknote> getMoney(BigDecimal moneyToGet) {
+        List<Banknote> banknotes = banknoteStorage.getBanknotes();
         List<Banknote> banknotesToReturn = new ArrayList<>();
-        List<Banknote> sorted = banknotes.stream()
+        List<Banknote> sortedByDenomination = banknotes.stream()
                 .sorted(Comparator.comparing(Banknote::getDenomination).reversed())
                 .collect(Collectors.toList());
-        Iterator<Banknote> banknoteIterator = sorted.iterator();
+        Iterator<Banknote> banknoteIterator = sortedByDenomination.iterator();
         BigDecimal currentMoney = new BigDecimal(moneyToGet.toString());
         while (banknoteIterator.hasNext()) {
             Banknote nextBankNote = banknoteIterator.next();
@@ -37,16 +37,11 @@ public class Atm {
             }
         }
         if (currentMoney.compareTo(BigDecimal.ZERO) != 0) {
+            banknoteStorage.addBanknotes(banknotes);
             throw new RuntimeException("Can't get money");
         } else {
-            banknotes = sorted;
+            banknoteStorage.addBanknotes(sortedByDenomination);
             return banknotesToReturn;
         }
-    }
-
-    public BigDecimal showBalance() {
-        return banknotes.stream()
-                .map(Banknote::getDenomination)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
