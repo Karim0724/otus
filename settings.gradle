@@ -5,5 +5,6 @@ include 'hw03-reflections'
 include 'hw04-gc'
 include 'hw05-byteCodes'
 include 'hw06-solid'
+include 'hw08-serialization'
 include 'hw09-homemadeOrm'
 
