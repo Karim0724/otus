@@ -21,7 +21,7 @@ public class Client implements Cloneable {
     private Address address;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Phone> phones;
+    private List<Phone> phones = new ArrayList<>();
 
     public Client() {
     }
@@ -44,7 +44,7 @@ public class Client implements Cloneable {
 
     @Override
     public Client clone() {
-        return new Client(this.id, this.name);
+        return new Client(this.id, this.name, this.address, this.phones);
     }
 
     public Long getId() {

@@ -22,7 +22,6 @@ import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 class HomeworkTest {
 
     private StandardServiceRegistry serviceRegistry;
@@ -51,7 +50,7 @@ class HomeworkTest {
         assertThat(tables).hasSize(3);
     }
 
-    @Test
+        @Test
     public void testHomeworkRequirementsForUpdatesCount() {
         applyCustomSqlStatementLogger(new SqlStatementLogger(true, false, false, 0) {
             @Override
@@ -61,8 +60,8 @@ class HomeworkTest {
             }
         });
 
-        var client = new Client(null, "Vasya", new Address(null, "AnyStreet"), List.of(new Phone(null, "13-555-22")));
-        client.addPhone(new Phone(null, "121212"));
+        var client = new Client(null, "Vasya", new Address(null, "AnyStreet"),
+            List.of(new Phone(null, "13-555-22"), new Phone(null, "14-666-333")));
         try (var session = sessionFactory.openSession()) {
             session.getTransaction().begin();
             session.persist(client);
@@ -70,8 +69,10 @@ class HomeworkTest {
 
             session.clear();
 
-            var loadedClient = session.find(Client.class, 1L);
-            assertThat(loadedClient).usingRecursiveComparison().isEqualTo(client);
+            var loadedClient = session.find(Client.class, 1L).clone();
+            assertThat(loadedClient)
+                .usingRecursiveComparison()
+                .isEqualTo(client);
         }
     }
 

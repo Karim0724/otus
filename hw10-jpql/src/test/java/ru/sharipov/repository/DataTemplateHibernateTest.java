@@ -1,9 +1,16 @@
 package ru.sharipov.repository;
 
+import junit.framework.AssertionFailedError;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.sharipov.base.AbstractHibernateTest;
+import ru.sharipov.crm.model.Address;
 import ru.sharipov.crm.model.Client;
+import ru.sharipov.crm.model.Phone;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,7 +20,8 @@ class DataTemplateHibernateTest extends AbstractHibernateTest {
     @DisplayName(" корректно сохраняет, изменяет и загружает клиента по заданному id")
     void shouldSaveAndFindCorrectClientById() {
         //given
-        var client = new Client("Вася");
+        var client = new Client(null, "Vasya", new Address(null, "AnyStreet"), List.of(new Phone(null, "13-555-22"),
+                new Phone(null, "14-666-333")));
 
         //when
         var savedClient = transactionManager.doInTransaction(session -> {
@@ -26,12 +34,17 @@ class DataTemplateHibernateTest extends AbstractHibernateTest {
         assertThat(savedClient.getName()).isEqualTo(client.getName());
 
         //when
-        var loadedSavedClient = transactionManager.doInReadOnlyTransaction(session ->
-                clientTemplate.findById(session, savedClient.getId())
+        var loadedSavedClient = transactionManager.doInReadOnlyTransaction(session ->{
+                    var res = clientTemplate.findById(session, savedClient.getId())
+                            .orElseThrow(() -> new AssertionFailedError("expected: not <null>"));
+                    return Optional.ofNullable(res.clone());
+                }
         );
 
         //then
-        assertThat(loadedSavedClient).isPresent().get().usingRecursiveComparison().isEqualTo(savedClient);
+        assertThat(loadedSavedClient).isPresent().get()
+                .usingRecursiveComparison()
+                .isEqualTo(savedClient);
 
         //when
         var updatedClient = savedClient.clone();
@@ -42,28 +55,38 @@ class DataTemplateHibernateTest extends AbstractHibernateTest {
         });
 
         //then
-        var loadedClient = transactionManager.doInReadOnlyTransaction(session ->
-                clientTemplate.findById(session, updatedClient.getId())
+        var loadedClient = transactionManager.doInReadOnlyTransaction(session -> {
+                    var res = clientTemplate.findById(session, updatedClient.getId())
+                            .orElseThrow(() -> new AssertionFailedError("expected: not <null>"));
+
+                    return Optional.of(res.clone());
+                }
         );
         assertThat(loadedClient).isPresent().get().usingRecursiveComparison().isEqualTo(updatedClient);
 
         //when
         var clientList = transactionManager.doInReadOnlyTransaction(session ->
-                clientTemplate.findAll(session)
+                clientTemplate.findAll(session).stream()
+                        .map(Client::clone).collect(Collectors.toList())
         );
 
         //then
         assertThat(clientList.size()).isEqualTo(1);
-        assertThat(clientList.get(0)).usingRecursiveComparison().isEqualTo(updatedClient);
+        assertThat(clientList.get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(updatedClient);
 
 
         //when
         clientList = transactionManager.doInReadOnlyTransaction(session ->
                 clientTemplate.findByEntityField(session, "name", "updatedName")
+                        .stream().map(Client::clone).collect(Collectors.toList())
         );
 
         //then
         assertThat(clientList.size()).isEqualTo(1);
-        assertThat(clientList.get(0)).usingRecursiveComparison().isEqualTo(updatedClient);
+        assertThat(clientList.get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(updatedClient);
     }
 }
