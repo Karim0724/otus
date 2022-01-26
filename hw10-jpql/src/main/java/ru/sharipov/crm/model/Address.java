@@ -26,6 +26,11 @@ public class Address {
         this.street = street;
     }
 
+
+    public Address copy() {
+        return new Address(this.id, this.street);
+    }
+
     public Client getClient() {
         return client;
     }

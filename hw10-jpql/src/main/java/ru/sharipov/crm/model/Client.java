@@ -3,6 +3,7 @@ package ru.sharipov.crm.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "client")
@@ -44,7 +45,12 @@ public class Client implements Cloneable {
 
     @Override
     public Client clone() {
-        return new Client(this.id, this.name, this.address, this.phones);
+        var phones = this.phones.stream().map(Phone::copy).collect(Collectors.toList());
+        Address address = null;
+        if (this.address != null) {
+            address = this.address.copy();
+        }
+        return new Client(this.id, this.name, address, phones);
     }
 
     public Long getId() {

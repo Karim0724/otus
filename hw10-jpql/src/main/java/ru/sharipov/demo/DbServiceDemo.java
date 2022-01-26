@@ -7,7 +7,9 @@ import ru.sharipov.core.repository.DataTemplateHibernate;
 import ru.sharipov.core.repository.HibernateUtils;
 import ru.sharipov.core.sessionmanager.TransactionManagerHibernate;
 import ru.sharipov.crm.dbmigrations.MigrationsExecutorFlyway;
+import ru.sharipov.crm.model.Address;
 import ru.sharipov.crm.model.Client;
+import ru.sharipov.crm.model.Phone;
 import ru.sharipov.crm.service.DbServiceClientImpl;
 
 public class DbServiceDemo {
@@ -25,7 +27,7 @@ public class DbServiceDemo {
 
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 
-        var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class);
+        var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class, Address.class, Phone.class);
 
         var transactionManager = new TransactionManagerHibernate(sessionFactory);
 ///

@@ -25,6 +25,10 @@ public class Phone {
         this.number = number;
     }
 
+    public Phone copy() {
+        return new Phone(this.id, this.number);
+    }
+
     public Long getId() {
         return id;
     }
