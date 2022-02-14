@@ -21,15 +21,6 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
 }
 
-shadowJar {
-    archiveBaseName.set('homemade-orm')
-    archiveVersion.set('0.1')
-    archiveClassifier.set('')
-    manifest {
-        attributes 'Main-Class': 'ru.sharipov.Demo'
-    }
-}
-
 test {
     useJUnitPlatform()
 }
