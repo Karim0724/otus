@@ -13,4 +13,5 @@ include 'hw12-web-server'
 include 'hw13-di'
 include 'hw14-springDataJdbc'
 include 'hw15-seq-of-numbers'
+include 'hw16-concurent-collections'
 
