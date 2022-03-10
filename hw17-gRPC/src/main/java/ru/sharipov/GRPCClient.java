@@ -16,7 +16,7 @@ public class GRPCClient {
         var channel = ManagedChannelBuilder.forAddress(SERVER_HOST, SERVER_PORT)
                 .usePlaintext()
                 .build();
-
+        var lock = new Object();
         var stub = SequenceGeneratorGrpc.newStub(channel);
         long[] response = new long[1];
         response[0] = -1;
@@ -24,7 +24,9 @@ public class GRPCClient {
             @Override
             public void onNext(SequenceResponse value) {
                 System.out.println("Число от сервера:" + value.getValue());
-                response[0] = value.getValue();
+                synchronized (lock) {
+                    response[0] = value.getValue();
+                }
             }
 
             @Override
@@ -41,9 +43,11 @@ public class GRPCClient {
         for (int i = 0; i <= 50; i++) {
             ThreadUtils.sleep(1000);
             currentValue++;
-            if (response[0] != -1) {
-                currentValue += response[0];
-                response[0] = -1;
+            synchronized (lock) {
+                if (response[0] != -1) {
+                    currentValue += response[0];
+                    response[0] = -1;
+                }
             }
             System.out.println("currentValue:" + currentValue);
         }
